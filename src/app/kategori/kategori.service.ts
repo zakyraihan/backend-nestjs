@@ -30,6 +30,7 @@ export class KategoriService extends BaseResponse {
     super();
   }
 
+  // membuat kategori
   async create(payload: CreateKategoriDto): Promise<ResponseSuccess> {
     try {
       await this.kategoriRepository.save(payload);
@@ -40,6 +41,7 @@ export class KategoriService extends BaseResponse {
     }
   }
 
+  // mendapatkan detail kategori dengan id
   async Detail(id: number): Promise<ResponseSuccess> {
     const cari = await this.kategoriRepository.findOne({
       where: {
@@ -67,6 +69,7 @@ export class KategoriService extends BaseResponse {
     return this._success('Berhasil Menemukan Detail', cari);
   }
 
+  // memperbaharui kategori
   async Update(
     id: number,
     payload: UpdateKategoriDto,
@@ -92,6 +95,7 @@ export class KategoriService extends BaseResponse {
     return this._success('Berhasil Mengupdate Data', update);
   }
 
+  // meghapus kategori
   async delete(id: number): Promise<ResponseSuccess> {
     const cek = await this.kategoriRepository.findOne({ where: { id: id } });
 
@@ -104,6 +108,7 @@ export class KategoriService extends BaseResponse {
     return this._success('Berhasil Menghapus Data', hapus);
   }
 
+  // mendapatkan semua kategori
   async getAllCategory(query: FindAllKategori): Promise<ResponsePagination> {
     const { page, pageSize, limit, nama_kategori, nama_user } = query;
 
@@ -143,6 +148,7 @@ export class KategoriService extends BaseResponse {
     return this._pagination('Sip', result, total, page, pageSize);
   }
 
+  // mendapatkan user kategori
   async getUserCategory(): Promise<ResponseSuccess> {
     const user = await this.UserRepository.findOne({
       where: { id: this.req.user.id },
@@ -160,10 +166,8 @@ export class KategoriService extends BaseResponse {
     return this._success('Sukses', user);
   }
 
-  async getBulk(
-    // @InjectCreatedBulkBy() @Req() req: Request,
-    payload: buatbulk,
-  ): Promise<ResponseSuccess> {
+  // create bulk
+  async createBulk(payload: buatbulk): Promise<ResponseSuccess> {
     try {
       let berhasil = 0;
       let gagal = 0;

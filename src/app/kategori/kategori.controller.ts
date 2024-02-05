@@ -31,7 +31,7 @@ export class KategoriController {
 
   @Post('create/bulk')
   bulkCreate(@InjectCreatedBy() Payload: buatbulk) {
-    return this.KategoriService.getBulk(Payload);
+    return this.KategoriService.createBulk(Payload);
   }
 
   @Get('list')
