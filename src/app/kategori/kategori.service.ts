@@ -94,7 +94,7 @@ export class KategoriService extends BaseResponse {
 
     const hapus = await this.kategoriRepository.delete(id);
 
-    return this._success('Berhasil Menghapus Data', hapus);
+    return this._success('Berhasil Menghapus kategori', hapus);
   }
 
   async getAllCategory(query: FindAllKategori): Promise<ResponsePagination> {
