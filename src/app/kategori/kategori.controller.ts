@@ -19,6 +19,7 @@ import { Pagination } from 'src/utils/decorator/pagination.decorator';
 import { InjectCreatedBy } from 'src/utils/decorator/inject-created_by.decorator';
 import { JwtGuard } from '../auth/auth.guard';
 import { InjectUpdatedBy } from 'src/utils/decorator/inject-updated_by.decorator';
+import { InjectBulkCreatedBy } from 'src/utils/decorator/inject-creared_bulk_by.decorator';
 @UseGuards(JwtGuard)
 @Controller('kategori')
 export class KategoriController {
@@ -30,7 +31,7 @@ export class KategoriController {
   }
 
   @Post('create/bulk')
-  bulkCreate(@InjectCreatedBy() Payload: buatbulk) {
+  bulkCreate(@InjectBulkCreatedBy() Payload: buatbulk) {
     return this.KategoriService.createBulk(Payload);
   }
 

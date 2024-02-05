@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  Inject,
-  HttpException,
-  HttpStatus,
-  Req,
-} from '@nestjs/common';
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Kategori } from './kategori.entity';
 import { Like, Repository } from 'typeorm';
@@ -18,7 +12,6 @@ import {
 } from './kategori.dto';
 import { ResponseSuccess, ResponsePagination } from 'src/interface/respone';
 import { User } from '../auth/auth.entity';
-import { InjectCreatedBulkBy } from 'src/utils/decorator/inject-creared_bulk_by.decorator';
 @Injectable()
 export class KategoriService extends BaseResponse {
   constructor(
@@ -30,7 +23,6 @@ export class KategoriService extends BaseResponse {
     super();
   }
 
-  // membuat kategori
   async create(payload: CreateKategoriDto): Promise<ResponseSuccess> {
     try {
       await this.kategoriRepository.save(payload);
@@ -41,7 +33,6 @@ export class KategoriService extends BaseResponse {
     }
   }
 
-  // mendapatkan detail kategori dengan id
   async Detail(id: number): Promise<ResponseSuccess> {
     const cari = await this.kategoriRepository.findOne({
       where: {
@@ -69,7 +60,6 @@ export class KategoriService extends BaseResponse {
     return this._success('Berhasil Menemukan Detail', cari);
   }
 
-  // memperbaharui kategori
   async Update(
     id: number,
     payload: UpdateKategoriDto,
@@ -95,7 +85,6 @@ export class KategoriService extends BaseResponse {
     return this._success('Berhasil Mengupdate Data', update);
   }
 
-  // meghapus kategori
   async delete(id: number): Promise<ResponseSuccess> {
     const cek = await this.kategoriRepository.findOne({ where: { id: id } });
 
@@ -108,7 +97,6 @@ export class KategoriService extends BaseResponse {
     return this._success('Berhasil Menghapus Data', hapus);
   }
 
-  // mendapatkan semua kategori
   async getAllCategory(query: FindAllKategori): Promise<ResponsePagination> {
     const { page, pageSize, limit, nama_kategori, nama_user } = query;
 
@@ -124,7 +112,7 @@ export class KategoriService extends BaseResponse {
 
     const total = await this.kategoriRepository.count({ where: filterQuery });
 
-    console.log('query', filterQuery);
+    console.log('Qwery', filterQuery);
 
     const result = await this.kategoriRepository.find({
       where: filterQuery,
@@ -148,7 +136,6 @@ export class KategoriService extends BaseResponse {
     return this._pagination('Sip', result, total, page, pageSize);
   }
 
-  // mendapatkan user kategori
   async getUserCategory(): Promise<ResponseSuccess> {
     const user = await this.UserRepository.findOne({
       where: { id: this.req.user.id },
@@ -166,7 +153,6 @@ export class KategoriService extends BaseResponse {
     return this._success('Sukses', user);
   }
 
-  // create bulk
   async createBulk(payload: buatbulk): Promise<ResponseSuccess> {
     try {
       let berhasil = 0;
@@ -178,19 +164,20 @@ export class KategoriService extends BaseResponse {
             await this.kategoriRepository.save({
               ...data,
             });
+
             berhasil = berhasil + 1;
-          } catch (error) {
+          } catch {
             gagal = gagal + 1;
           }
         }),
       );
 
       return this._success(
-        `Berhasil menyimpan data sebanyak ${berhasil} dan gagal sebanyak ${gagal} kali`,
-        this.req.user_id,
+        `Berhasil Menyimpan Data Sebanyak ${berhasil} Kali Dan Gagal Sebanyak ${gagal} Kali`,
+        this.req.user.user_id,
       );
-    } catch (error) {
-      throw new HttpException('Terjadi kesalahan', HttpStatus.BAD_REQUEST);
+    } catch {
+      throw new HttpException('Terjadi Kesalahan', HttpStatus.BAD_REQUEST);
     }
   }
 }
