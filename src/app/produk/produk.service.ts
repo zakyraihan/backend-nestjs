@@ -55,26 +55,28 @@ export class ProdukService extends BaseResponse {
       throw new HttpException('ada kesalahan', HttpStatus.BAD_REQUEST);
     }
   }
-
   async deleteBulk(payload: DeleteProdukArrayDto): Promise<ResponseSuccess> {
     try {
       let berhasil = 0;
       let gagal = 0;
+
       await Promise.all(
         payload.data.map(async (items) => {
           try {
-            await this.produkRepository.delete(items), (berhasil += 1);
+            await this.deleteProduk(items);
+            berhasil += 1;
           } catch (error) {
-            console.log('error', error);
+            console.error('error', error);
             gagal += 1;
           }
         }),
       );
+
       return this._success(
         `berhasil menghapus buku sebanyak ${berhasil} dan gagal ${gagal}`,
       );
     } catch (error) {
-      console.log('error', error);
+      console.error('error', error);
       throw new HttpException('Terjadi Kesalahan', HttpStatus.BAD_REQUEST);
     }
   }

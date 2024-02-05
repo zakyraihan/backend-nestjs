@@ -49,6 +49,4 @@ export class Produk extends BaseEntity {
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
-
-  
 }
