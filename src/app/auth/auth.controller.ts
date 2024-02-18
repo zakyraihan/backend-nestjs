@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
-import { DtoRegister, DtonyaLogin } from './auth.dto';
+import { DtoRegister, LoginDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { JwtGuard, JwtGuardRefreshToken } from './auth.guard';
 
@@ -13,7 +13,7 @@ export class AuthController {
   }
 
   @Post('Login')
-  async login(@Body() payload: DtonyaLogin) {
+  async login(@Body() payload: LoginDto) {
     return this.authService.Login(payload);
   }
 
@@ -37,6 +37,4 @@ export class AuthController {
     console.log('email', email);
     return this.authService.lupaKataSandi(email);
   }
-
-  
 }

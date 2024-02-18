@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import BaseResponse from 'src/utils/Response/base.response';
 import { Repository } from 'typeorm';
-import { DtoRegister, DtonyaLogin, ResetPasswordDto } from './auth.dto';
+import { DtoRegister, LoginDto, ResetPasswordDto } from './auth.dto';
 import { compare, hash } from 'bcrypt';
 import { ResponseSuccess } from 'src/interface/respone';
 import { User } from './auth.entity';
@@ -41,11 +41,11 @@ export class AuthService extends BaseResponse {
   }
 
   async register(payload: DtoRegister): Promise<ResponseSuccess> {
-    const apakahUserAda = await this.authRepository.findOne({
+    const isEmailExist = await this.authRepository.findOne({
       where: { email: payload.email },
     });
 
-    if (apakahUserAda) {
+    if (isEmailExist) {
       throw new HttpException('Maaf User Sudah Daftar', HttpStatus.BAD_REQUEST);
     }
 
@@ -54,8 +54,8 @@ export class AuthService extends BaseResponse {
     return this._success('Sip', payload);
   }
 
-  async Login(payload: DtonyaLogin): Promise<ResponseSuccess> {
-    const apakahEmailada = await this.authRepository.findOne({
+  async Login(payload: LoginDto): Promise<ResponseSuccess> {
+    const isEmailExist = await this.authRepository.findOne({
       where: { email: payload.email },
       select: {
         id: true,
@@ -66,23 +66,20 @@ export class AuthService extends BaseResponse {
       },
     });
 
-    if (!apakahEmailada) {
+    if (!isEmailExist) {
       throw new HttpException(
         'Maaf, User Anda Tidak Dapat Ditemukan',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    const cekKatasandi = await compare(
-      payload.password,
-      apakahEmailada.password,
-    );
+    const cekKatasandi = await compare(payload.password, isEmailExist.password);
 
     if (cekKatasandi) {
       const jwtPayload: jwtPayload = {
-        id: apakahEmailada.id,
-        nama: apakahEmailada.nama,
-        email: apakahEmailada.email,
+        id: isEmailExist.id,
+        nama: isEmailExist.nama,
+        email: isEmailExist.email,
       };
 
       const access_token = await this.generateJWT(
@@ -99,10 +96,10 @@ export class AuthService extends BaseResponse {
 
       await this.authRepository.save({
         refresh_token: refresh_token,
-        id: apakahEmailada.id,
+        id: isEmailExist.id,
       });
       return this._success('Login Sukses', {
-        ...apakahEmailada,
+        ...isEmailExist,
         access_token: access_token,
         refresh_token: refresh_token,
         role: 'siswa',

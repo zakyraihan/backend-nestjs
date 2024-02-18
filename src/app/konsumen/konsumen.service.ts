@@ -1,15 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import BaseResponse from 'src/utils/response/base.response';
 import { Konsumen } from './konsumen.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import BaseResponse from 'src/utils/Response/base.response';
-import {
-  CreateKonsumenDto,
-  KonsumenDto,
-  findAllKonsumenDto,
-} from './konsumen.dto';
-import { ResponseSuccess } from 'src/interface/respone';
-import { query } from 'express';
+
+import { CreateKonsumenDto, findAllKonsumenDto } from './konsumen.dto';
+import { ResponsePagination, ResponseSuccess } from 'src/interface/respone';
 
 @Injectable()
 export class KonsumenService extends BaseResponse {
@@ -23,14 +19,15 @@ export class KonsumenService extends BaseResponse {
   async create(payload: CreateKonsumenDto): Promise<ResponseSuccess> {
     try {
       await this.konsumenRepository.save(payload);
-      return this._success('oke');
-    } catch (error) {
-      console.log(`error -> ${error}`);
+
+      return this._success('OK');
+    } catch (err) {
+      console.log('error -> ', err);
       throw new HttpException('Ada Kesalahan', HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
 
-  async findAll(query: findAllKonsumenDto): Promise<ResponseSuccess> {
+  async findAll(query: findAllKonsumenDto): Promise<ResponsePagination> {
     const { page, pageSize, limit, keyword } = query;
 
     const filterKeyword = [];
@@ -60,6 +57,7 @@ export class KonsumenService extends BaseResponse {
       select: {
         id: true,
         nama_konsumen: true,
+        email: true,
         nomor_handphone: true,
         alamat_konsumen: true,
         created_by: {
@@ -74,6 +72,6 @@ export class KonsumenService extends BaseResponse {
       skip: limit,
       take: pageSize,
     });
-    return this._pagination('OKE', result,total,page,pageSize)
+    return this._pagination('OK', result, total, page, pageSize);
   }
 }

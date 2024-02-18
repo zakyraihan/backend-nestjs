@@ -13,6 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { PageRequestDto } from 'src/utils/dto/page.dto';
+
 import { Konsumen } from './konsumen.entity';
 import { IsUnique } from 'src/utils/validator/unique.validator';
 

@@ -6,7 +6,9 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
+import { OrderEntity } from '../order/order.entity';
 
 @Entity()
 export class Konsumen extends BaseEntity {
@@ -38,4 +40,7 @@ export class Konsumen extends BaseEntity {
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @OneToMany(() => OrderEntity, (order) => order.konsumen)
+  order: OrderEntity[]; // This represents the orders associated with the Konsumen
 }
