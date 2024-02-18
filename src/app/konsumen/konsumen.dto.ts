@@ -13,8 +13,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { PageRequestDto } from 'src/utils/dto/page.dto';
-
 import { Konsumen } from './konsumen.entity';
+import { IsUnique } from 'src/utils/validator/unique.validator';
 
 export class KonsumenDto {
   @IsInt()
@@ -30,7 +30,7 @@ export class KonsumenDto {
 
   @IsString()
   @IsEmail()
-  @IsExists([Konsumen, 'email'])
+  @IsUnique([Konsumen, 'email'])
   email: string;
 
   @IsString()
@@ -42,7 +42,6 @@ export class KonsumenDto {
   @IsObject()
   @IsOptional()
   updated_by: { id: number };
-
   @IsObject()
   @IsOptional()
   created_by: { id: number };
@@ -76,10 +75,4 @@ export class findAllKonsumenDto extends PageRequestDto {
   @IsString()
   @IsOptional()
   keyword: string;
-}
-
-function IsExists(
-  arg0: (string | typeof Konsumen)[],
-): (target: KonsumenDto, propertyKey: 'email') => void {
-  throw new Error('Function not implemented.');
 }

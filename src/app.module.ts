@@ -12,21 +12,29 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { UploadController } from './app/upload/upload.controller';
 import { KonsumenModule } from './app/konsumen/konsumen.module';
+import { UniqueValidator } from './utils/validator/unique.validator';
+import { ConfigModule } from '@nestjs/config';
+import { OrderModule } from './app/order/order.module';
+import { OrderDetailModule } from './app/order_detail/order_detail.module';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
-
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot(typeOrmConfig),
     AuthModule,
     MailModule,
     KategoriModule,
     ProdukModule,
     KonsumenModule,
+    OrderModule,
+    OrderDetailModule,
   ],
   controllers: [AppController, UploadController],
-  providers: [AppService],
+  providers: [AppService, UniqueValidator],
 })
 export class AppModule {}
