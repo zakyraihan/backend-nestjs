@@ -97,7 +97,8 @@ export class AuthService extends BaseResponse {
             return this._success('Login Sukses', {
                 ...apakahEmailada,
                 access_token: access_token,
-                refresh_token: refresh_token
+                refresh_token: refresh_token,
+                role: 'siswa',
             })
         } else {
             throw new HttpException(
