@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./auth.entity";
+import { GoogleUser, User } from "./auth.entity";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { JwtAccessTokenStrategy } from "./jwtAccessToken.strategy";
@@ -14,7 +14,7 @@ import { jwt_config } from "src/config/jwt.config";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, ResetPassword]),
+    TypeOrmModule.forFeature([User, ResetPassword, GoogleUser]),
     PassportModule.register({
       defaultStrategy: 'jwt',
       property: 'user',

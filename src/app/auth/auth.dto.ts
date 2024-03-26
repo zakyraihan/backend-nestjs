@@ -16,6 +16,7 @@ export class UserDto {
   @IsString()
   nama: string;
 
+  @IsString()
   avatar: string;
 
   @IsString()
@@ -39,8 +40,41 @@ export class DtoRegister extends PickType(UserDto, [
   'password',
 ]) {}
 export class LoginDto extends PickType(UserDto, ['email', 'password']) {}
+
 export class ResetPasswordDto {
   @IsString()
   @MinLength(8)
-  password_baru: string;
+  new_password: string;
 }
+
+export class UserGoogleDto {
+  @IsString()
+  id: string;
+
+  @IsString()
+  nama: string;
+
+  @IsString()
+  avatar: string;
+
+  @IsString()
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  refresh_token: string;
+
+  @IsString()
+  role: string;
+
+  @IsString()
+  id_token: string;
+}
+
+export class LoginGoogleDTO extends PickType(UserGoogleDto, [
+  'id',
+  'nama',
+  'avatar',
+  'email',
+  'id_token',
+]) {}

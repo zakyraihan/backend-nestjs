@@ -12,7 +12,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { PageRequestDto } from 'src/utils/dto/page.dto';
+import { PageRequestDto } from 'src/utils/page dto/page.dto';
 
 import { Konsumen } from './konsumen.entity';
 import { IsUnique } from 'src/utils/validator/unique.validator';
@@ -43,6 +43,7 @@ export class KonsumenDto {
   @IsObject()
   @IsOptional()
   updated_by: { id: number };
+
   @IsObject()
   @IsOptional()
   created_by: { id: number };
@@ -54,12 +55,14 @@ export class CreateKonsumenDto extends OmitType(KonsumenDto, [
 ]) {}
 
 export class UpdateKonsumenDto extends OmitType(KonsumenDto, ['created_by']) {}
+
 export class CreateKonsumenArrayDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateKonsumenDto)
   data: CreateKonsumenDto[];
 }
+
 export class findAllKonsumenDto extends PageRequestDto {
   @IsString()
   @IsOptional()

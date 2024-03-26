@@ -12,7 +12,7 @@ import {
   ValidateNested,
   isString,
 } from 'class-validator';
-import { PageRequestDto } from 'src/utils/dto/page.dto';
+import { PageRequestDto } from 'src/utils/page dto/page.dto';
 import { Kategori } from '../kategori/kategori.entity';
 
 export class ProdukDto {

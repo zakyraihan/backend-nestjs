@@ -19,6 +19,7 @@ export class KonsumenService extends BaseResponse {
   async create(payload: CreateKonsumenDto): Promise<ResponseSuccess> {
     try {
       await this.konsumenRepository.save(payload);
+      console.log('payload', payload);
 
       return this._success('OK');
     } catch (err) {

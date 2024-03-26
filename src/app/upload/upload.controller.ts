@@ -20,6 +20,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ResponseSuccess } from 'src/interface/respone';
 import * as fs from 'fs';
+import { FileValidator } from 'src/utils/validator/file.validator';
 
 @UseGuards(JwtGuard)
 @Controller('upload')
@@ -34,39 +35,26 @@ export class UploadController extends BaseResponse {
         destination: 'public/uploads',
         filename: (req, file, cb) => {
           const fileExtension = file.originalname.split('.').pop();
-          console.log(file),
-            console.log(req),
-            cb(null, `${new Date().getTime()}.${fileExtension}`);
+          // console.log(file),
+          // console.log(req),
+          // cb(null, `${new Date().getTime()}.${fileExtension}`);
         },
       }),
     }),
   )
   @Post('file')
   async uploadFile(
-    @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({
-          fileType: 'image/jpeg',
-        })
-        .addMaxSizeValidator({
-          maxSize: 2000,
-        })
-        .build({
-          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        }),
-    )
+    @UploadedFile()
     file: Express.Multer.File,
   ): Promise<ResponseSuccess> {
-    try {
-      const url = `http://localhost:8080/uploads/${file.filename}`;
-      return this._success('OK', {
-        file_url: url,
-        file_name: file.filename,
-        file_size: file.size,
-      });
-    } catch (error) {
-      throw new HttpException('Ada Kesalahan', HttpStatus.BAD_REQUEST);
-    }
+    FileValidator.validateFile(file, ['.jpg', '.pdf', '.png'], 2 * 1024 * 1024);
+    const url = `http://localhost:8080/uploads/${file.filename}`;
+
+    return this._success('OK', {
+      file_url: url,
+      file_name: file.filename,
+      file_size: file.size,
+    });
   }
 
   @UseInterceptors(
@@ -93,6 +81,7 @@ export class UploadController extends BaseResponse {
       }> = [];
 
       files.forEach((file) => {
+        FileValidator.validateFile(file, ['.jpg', '.pdf', '.png'], 2 * 1024 * 1024);
         const url = `http://localhost:8080/uploads/uploads/${file.filename}`;
         file_response.push({
           file_url: url,

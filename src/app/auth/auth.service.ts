@@ -7,10 +7,15 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import BaseResponse from 'src/utils/Response/base.response';
 import { Repository } from 'typeorm';
-import { DtoRegister, LoginDto, ResetPasswordDto } from './auth.dto';
+import {
+  DtoRegister,
+  LoginDto,
+  LoginGoogleDTO,
+  ResetPasswordDto,
+} from './auth.dto';
 import { compare, hash } from 'bcrypt';
 import { ResponseSuccess } from 'src/interface/respone';
-import { User } from './auth.entity';
+import { GoogleUser, User } from './auth.entity';
 import { jwt_config } from 'src/config/jwt.config';
 import { JwtService } from '@nestjs/jwt';
 import { ResetPassword } from './reste_password.entity';
@@ -21,8 +26,10 @@ import { randomBytes } from 'crypto';
 export class AuthService extends BaseResponse {
   constructor(
     @InjectRepository(User) private readonly authRepository: Repository<User>,
+    @InjectRepository(GoogleUser)
+    private readonly googleUserRepository: Repository<GoogleUser>,
     @InjectRepository(ResetPassword)
-    private readonly resetKataSandi: Repository<ResetPassword>,
+    private readonly resetPasswordRepository: Repository<ResetPassword>,
     private jwtService: JwtService,
     private mailService: MailService,
   ) {
@@ -187,7 +194,7 @@ export class AuthService extends BaseResponse {
     }
 
     const token = randomBytes(32).toString('hex');
-    const link = `http://localhost:8080/auth/reset-password/${user.id}/${token}`;
+    const link = `http://localhost:3010/auth/reset-password/${user.id}/${token}`;
     await this.mailService.kirimLupaSandi({
       email: email,
       name: user.nama,
@@ -201,7 +208,9 @@ export class AuthService extends BaseResponse {
       token: token,
     };
 
-    return this._success('Sukses Mereset Password');
+    await this.resetPasswordRepository.save(payload);
+
+    return this._success('Silahkan Cek Email');
   }
 
   async resetPassword(
@@ -209,7 +218,8 @@ export class AuthService extends BaseResponse {
     token: string,
     payload: ResetPasswordDto,
   ): Promise<ResponseSuccess> {
-    const Token = await this.resetKataSandi.findOne({
+    const userToken = await this.resetPasswordRepository.findOne({
+      //cek apakah user_id dan token yang sah pada tabel reset password
       where: {
         token: token,
         user: {
@@ -217,26 +227,112 @@ export class AuthService extends BaseResponse {
         },
       },
     });
-    if (!Token) {
+    console.log('userToken', userToken);
+
+    if (!userToken) {
       throw new HttpException(
-        'Token Tidak Valid',
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        'Token tidak valid',
+        HttpStatus.UNPROCESSABLE_ENTITY, // jika tidak sah , berikan pesan token tidak valid
       );
     }
 
-    payload.password_baru = await hash(payload.password_baru, 12);
-
+    payload.new_password = await hash(payload.new_password, 12); //hash password
     await this.authRepository.save({
-      password: payload.password_baru,
+      // ubah password lama dengan password baru
+      password: payload.new_password,
       id: user_id,
     });
-
-    await this.resetKataSandi.delete({
+    await this.resetPasswordRepository.delete({
+      // hapus semua token pada tabel reset password yang mempunyai user_id yang dikirim, agar tidak bisa digunakan kembali
       user: {
         id: user_id,
       },
     });
 
-    return this._success('Reset Password Berhasil, Silahkan Login Ulang');
+    return this._success('Reset Passwod Berhasil, Silahkan login ulang');
+  }
+
+  async loginWithGoogle(payload: LoginGoogleDTO) {
+    console.log(payload);
+
+    try {
+      const resDecode: any = this.jwtService.decode(payload.id_token);
+
+      if (resDecode.email == payload.email) {
+        const checkUserExists = await this.googleUserRepository.findOne({
+          where: {
+            email: payload.email,
+          },
+          select: {
+            id: true,
+            nama: true,
+            email: true,
+            refresh_token: true,
+          },
+        });
+
+        if (checkUserExists == null) {
+          const jwtPayload: jwtPayload = {
+            id: payload.id,
+            nama: payload.nama,
+            email: payload.email,
+          };
+
+          const access_token = await this.generateJWT(
+            jwtPayload,
+            '1d',
+            jwt_config.access_token_secret,
+          );
+
+          const refresh_token = await this.generateJWT(
+            jwtPayload,
+            '7d',
+            jwt_config.refresh_token_secret,
+          );
+
+          await this.googleUserRepository.save({
+            ...payload,
+            refresh_token,
+            access_token,
+            id: payload.id,
+          });
+        }
+      }
+    } catch (error) {
+      console.log('err', error);
+      throw new HttpException('Ada Kesalahan', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getDataloginGoogle(id: string) {
+    const checkUserExists = await this.googleUserRepository.findOne({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+        nama: true,
+        email: true,
+        refresh_token: true,
+      },
+    });
+
+    const jwtPayload: jwtPayload = {
+      id: checkUserExists.id,
+      nama: checkUserExists.nama,
+      email: checkUserExists.email,
+    };
+
+    const access_token = await this.generateJWT(
+      jwtPayload,
+      '1d',
+      jwt_config.access_token_secret,
+    );
+
+    return this._success('Login Success', {
+      ...checkUserExists,
+      access_token: access_token,
+      role: 'siswa',
+    });
   }
 }

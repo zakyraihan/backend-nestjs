@@ -12,7 +12,7 @@ import {
   IsNumber,
   IsDate,
 } from 'class-validator';
-import { PageRequestDto } from 'src/utils/dto/page.dto';
+import { PageRequestDto } from 'src/utils/page dto/page.dto';
 import { Status } from './order.entity';
 import { OrderDetailDto } from '../order_detail/order_detail.dto';
 

@@ -1,7 +1,7 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, IsObject, IsArray, ValidateNested } from 'class-validator';
-import { PageRequestDto } from 'src/utils/dto/page.dto';
+import { PageRequestDto } from 'src/utils/page dto/page.dto';
 
 export class KategoriDto {
   @IsInt()
