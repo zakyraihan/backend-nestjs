@@ -17,6 +17,8 @@ import { ConfigModule } from '@nestjs/config';
 import { OrderModule } from './app/order/order.module';
 import { OrderDetailModule } from './app/order_detail/order_detail.module';
 import { ProfileModule } from './app/profile/profile.module';
+import { BookModule } from './pts/book/book.module';
+import { AuthsModule } from './pts/auths/auths.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { ProfileModule } from './app/profile/profile.module';
     OrderModule,
     OrderDetailModule,
     ProfileModule,
+    BookModule,
+    AuthsModule,
   ],
   controllers: [AppController, UploadController],
   providers: [AppService, UniqueValidator],

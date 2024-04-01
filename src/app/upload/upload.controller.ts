@@ -35,28 +35,27 @@ export class UploadController extends BaseResponse {
         destination: 'public/uploads',
         filename: (req, file, cb) => {
           const fileExtension = file.originalname.split('.').pop();
-          // console.log(file),
-          // console.log(req),
-          // cb(null, `${new Date().getTime()}.${fileExtension}`);
+          cb(null, `${new Date().getTime()}.${fileExtension}`);
         },
       }),
     }),
   )
   @Post('file')
   async uploadFile(
-    @UploadedFile()
-    file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<ResponseSuccess> {
-    FileValidator.validateFile(file, ['.jpg', '.pdf', '.png'], 2 * 1024 * 1024);
-    const url = `http://localhost:8080/uploads/${file.filename}`;
-
-    return this._success('OK', {
-      file_url: url,
-      file_name: file.filename,
-      file_size: file.size,
-    });
+    try {
+      const url = `http://localhost:2006/uploads/${file.filename}`;
+      return this._success('OK', {
+        file_url: url,
+        file_name: file.filename,
+        file_size: file.size,
+      });
+    } catch (err) {
+      throw new HttpException('Ada Kesalahan', HttpStatus.BAD_REQUEST);
+    }
   }
-
+  
   @UseInterceptors(
     FilesInterceptor('files', 20, {
       storage: diskStorage({
@@ -81,8 +80,12 @@ export class UploadController extends BaseResponse {
       }> = [];
 
       files.forEach((file) => {
-        FileValidator.validateFile(file, ['.jpg', '.pdf', '.png'], 2 * 1024 * 1024);
-        const url = `http://localhost:8080/uploads/uploads/${file.filename}`;
+        FileValidator.validateFile(
+          file,
+          ['.jpg', '.pdf', '.png'],
+          2 * 1024 * 1024,
+        );
+        const url = `http://localhost:2006/uploads/${file.filename}`;
         file_response.push({
           file_url: url,
           file_name: file.filename,
