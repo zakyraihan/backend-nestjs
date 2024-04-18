@@ -109,7 +109,7 @@ export class AuthService extends BaseResponse {
         ...isEmailExist,
         access_token: access_token,
         refresh_token: refresh_token,
-        role: 'siswa',
+        
       });
     } else {
       throw new HttpException(
@@ -332,7 +332,6 @@ export class AuthService extends BaseResponse {
     return this._success('Login Success', {
       ...checkUserExists,
       access_token: access_token,
-      role: 'siswa',
     });
   }
 }

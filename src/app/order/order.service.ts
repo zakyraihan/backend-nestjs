@@ -51,4 +51,60 @@ export class OrderService extends BaseResponse {
       throw new HttpException('Ada Kesalahan', HttpStatus.UNPROCESSABLE_ENTITY);
     }
   }
+
+  async findById(id: number): Promise<ResponseSuccess> {
+    const result = await this.orderRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: [
+        'created_by',
+        'konsumen',
+        'order_detail',
+        'order_detail.produk',
+      ],
+      select: {
+        id: true,
+        nomor_order: true,
+        status: true,
+        total_bayar: true,
+        tanggal_order: true,
+
+        konsumen: {
+          id: true,
+          nama_konsumen: true,
+        },
+        created_by: {
+          id: true,
+          nama: true,
+        },
+
+        order_detail: {
+          id: true,
+
+          jumlah: true,
+          produk: {
+            id: true,
+            nama_produk: true,
+            harga: true,
+          },
+        },
+      },
+    });
+
+    return this._success('OK', result);
+  }
+
+  async deleteOrder(id: number): Promise<ResponseSuccess> {
+    const check = await this.orderRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!check) {
+      throw new NotFoundException(`order dengan id ${id} tidak ditemukan`);
+    }
+    await this.orderRepository.delete(id);
+    return this._success('berhasil menghapus order');
+  }
 }

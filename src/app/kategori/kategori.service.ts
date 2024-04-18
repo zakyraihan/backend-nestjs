@@ -22,10 +22,14 @@ export class KategoriService extends BaseResponse {
   ) {
     super();
   }
-
   async create(payload: CreateKategoriDto): Promise<ResponseSuccess> {
     try {
-      await this.kategoriRepository.save(payload);
+      await this.kategoriRepository.save({
+        ...payload,
+        created_by: {
+          id: this.req.user.id,
+        },
+      });
 
       return this._success('OK', this.req.user.user_id);
     } catch {

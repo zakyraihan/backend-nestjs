@@ -52,6 +52,7 @@ export class KonsumenDto {
 export class CreateKonsumenDto extends OmitType(KonsumenDto, [
   'id',
   'updated_by',
+  'created_by',
 ]) {}
 
 export class UpdateKonsumenDto extends OmitType(KonsumenDto, ['created_by']) {}

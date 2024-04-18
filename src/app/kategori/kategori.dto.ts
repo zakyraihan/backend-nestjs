@@ -21,8 +21,10 @@ export class KategoriDto {
 
 export class CreateKategoriDto extends OmitType(KategoriDto, [
   'id',
+  'created_by',
   'updated_by',
 ]) {}
+
 export class UpdateKategoriDto extends OmitType(KategoriDto, ['created_by']) {}
 export class FindAllKategori extends PageRequestDto {
   @IsString()

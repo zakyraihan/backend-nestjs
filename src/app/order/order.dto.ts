@@ -55,7 +55,11 @@ export class OrderDto {
   order_detail: OrderDetailDto[];
 }
 
-export class CreateOrderDto extends OmitType(OrderDto, ['id', 'updated_by']) {}
+export class CreateOrderDto extends OmitType(OrderDto, [
+  'id',
+  'updated_by',
+  'created_by',
+]) {}
 
 export class UpdateOrderDto extends PartialType(OrderDto) {
   @IsInt()
