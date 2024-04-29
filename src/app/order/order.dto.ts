@@ -66,6 +66,7 @@ export class UpdateOrderDto extends PartialType(OrderDto) {
   @IsNotEmpty()
   id: number;
 }
+
 export class CreateOrderArrayDto {
   @IsArray()
   @ValidateNested({ each: true })

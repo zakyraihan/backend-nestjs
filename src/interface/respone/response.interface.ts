@@ -12,3 +12,5 @@ export interface ResponsePagination extends ResponseSuccess {
         total_page : any;
       };
 }
+
+
