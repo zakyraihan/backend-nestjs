@@ -33,9 +33,12 @@ export class OrderService extends BaseResponse {
       const invoice = this.generateInvoice();
       payload.nomor_order = invoice;
 
+      var total = 0;
+
       payload.order_detail &&
         payload.order_detail.forEach((item) => {
           item.created_by = this.req.user.id;
+          total += item.jumlah * item.jumlah_harga;
         });
 
       await this.orderRepository.save({
@@ -43,6 +46,7 @@ export class OrderService extends BaseResponse {
         konsumen: {
           id: payload.konsumen_id,
         },
+        total: total,
       });
 
       return this._success('OK');
@@ -130,7 +134,6 @@ export class OrderService extends BaseResponse {
 
         order_detail: {
           id: true,
-
           jumlah: true,
           produk: {
             nama_produk: true,

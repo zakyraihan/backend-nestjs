@@ -15,6 +15,9 @@ export class OrderDetail extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'double', precision: 18, scale: 2, nullable: true })
+  jumlah_harga: number;
+
   @Column({ nullable: false })
   jumlah: number;
 

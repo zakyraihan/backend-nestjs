@@ -61,7 +61,7 @@ export class AuthService extends BaseResponse {
     return this._success('Sip', payload);
   }
 
-  async Login(payload: LoginDto): Promise<ResponseSuccess> {
+  async login(payload: LoginDto): Promise<ResponseSuccess> {
     const isEmailExist = await this.authRepository.findOne({
       where: { email: payload.email },
       select: {
@@ -105,11 +105,12 @@ export class AuthService extends BaseResponse {
         refresh_token: refresh_token,
         id: isEmailExist.id,
       });
+
       return this._success('Login Sukses', {
         ...isEmailExist,
         access_token: access_token,
         refresh_token: refresh_token,
-        
+        role: 'siswa',
       });
     } else {
       throw new HttpException(

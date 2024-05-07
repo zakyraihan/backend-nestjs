@@ -34,7 +34,7 @@ export class OrderEntity extends BaseEntity {
   })
   status: Status;
 
-  @Column({ type: 'double', precision: 18, scale: 2, nullable: false })
+  @Column({ type: 'double', precision: 18, scale: 2, nullable: true })
   total_bayar: number;
 
   @ManyToOne(() => Konsumen, (v) => v.order, { onDelete: 'CASCADE' })
