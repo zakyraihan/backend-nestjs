@@ -48,7 +48,9 @@ export class KategoriController {
   @Put('update/:id')
   async Update(
     @Param('id') id: string,
-    @InjectUpdatedBy() payload: UpdateKategoriDto,
+    @InjectUpdatedBy()
+    @Body()
+    payload: UpdateKategoriDto,
   ) {
     return this.KategoriService.Update(Number(id), payload);
   }

@@ -28,6 +28,8 @@ export class UniqueValidator implements ValidatorConstraintInterface {
     }
   }
 
+  // Find something Worth saving ...
+
   defaultMessage(args?: ValidationArguments) {
     return `${args.constraints[1]} sudah digunakan`;
   }

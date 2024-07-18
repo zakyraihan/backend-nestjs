@@ -59,8 +59,7 @@ export class ProdukDto {
 
 export class CreateProdukDto extends OmitType(ProdukDto, ['id']) {}
 
-export class UpdateProdukDto extends PickType(ProdukDto, ['created_by']) {}
-
+export class UpdateProdukDto extends OmitType(ProdukDto, ['id'] ) {}
 export class CreateProdukArrayDto {
   @IsArray()
   @ValidateNested({ each: true })

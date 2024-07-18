@@ -55,6 +55,7 @@ export class ProdukService extends BaseResponse {
       throw new HttpException('ada kesalahan', HttpStatus.BAD_REQUEST);
     }
   }
+  
   async deleteBulk(payload: DeleteProdukArrayDto): Promise<ResponseSuccess> {
     try {
       let berhasil = 0;
@@ -147,6 +148,7 @@ export class ProdukService extends BaseResponse {
         deskripsi_produk: true,
         stok: true,
         harga: true,
+        barcode: true,
         kategori: {
           id: true,
           nama_kategori: true,
@@ -171,11 +173,12 @@ export class ProdukService extends BaseResponse {
       where: {
         id: id,
       },
-      relations: ['created_by', 'updated_by'],
+      relations: ['created_by', 'updated_by', 'kategori'],
       select: {
         id: true,
         nama_produk: true,
         deskripsi_produk: true,
+        barcode: true,
         stok: true,
         harga: true,
         created_by: {
@@ -198,26 +201,23 @@ export class ProdukService extends BaseResponse {
     return this._success('berhasil menemukan detail produk', search);
   }
 
-  async updateProduk(
-    id: number,
-    payload: UpdateProdukDto,
-  ): Promise<ResponseSuccess> {
-    const search = await this.produkRepository.findOne({
+  async update(id: number, payload: UpdateProdukDto): Promise<ResponseSuccess> {
+    const check = await this.produkRepository.findOne({
       where: {
         id: id,
       },
     });
-    if (search == null) {
-      throw new HttpException(
-        'terjadi kesalahan',
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+
+    if (!check) {
+      throw new HttpException('Produk tidak ditemukan', HttpStatus.NOT_FOUND);
     }
-    const update = await this.produkRepository.save({
+
+    Object.assign(check, payload);
+    const updateProduk = await this.produkRepository.save({
       ...payload,
       id: id,
     });
-    return this._success('berhasil update produk', update);
+    return this._success('Berhasil mengupdate produk', updateProduk);
   }
 
   async deleteProduk(id: number): Promise<ResponseSuccess> {

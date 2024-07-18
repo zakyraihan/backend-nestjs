@@ -3,6 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -40,11 +43,11 @@ export class ProdukController {
   }
 
   @Put('update/:id')
-  async update(
-    @Param('id') id: string,
-    @InjectUpdatedBy() payload: UpdateProdukDto,
+  async updateProduk(
+    @Param('id') id: number,
+    @Body() payload: UpdateProdukDto,
   ) {
-    return this.produkService.updateProduk(Number(id), payload);
+    const updatedProduk = await this.produkService.update(id, payload);
   }
 
   @Delete('delete/:id')

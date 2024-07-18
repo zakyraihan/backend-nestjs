@@ -46,7 +46,7 @@ export class OrderService extends BaseResponse {
         konsumen: {
           id: payload.konsumen_id,
         },
-        total: total,
+        total_bayar: total,
       });
 
       return this._success('OK');
@@ -68,6 +68,8 @@ export class OrderService extends BaseResponse {
       dari_total_bayar,
       sampai_total_bayar,
       nama_konsumen,
+      sort_by,
+      order_by,
     } = query;
 
     const filterQuery: any = [];
@@ -131,7 +133,6 @@ export class OrderService extends BaseResponse {
           id: true,
           nama: true,
         },
-
         order_detail: {
           id: true,
           jumlah: true,
@@ -143,6 +144,9 @@ export class OrderService extends BaseResponse {
 
       skip: limit,
       take: pageSize,
+      order: {
+        [sort_by]: order_by,
+      },
     });
     return this._pagination('OK', result, total, page, pageSize);
   }
@@ -164,7 +168,6 @@ export class OrderService extends BaseResponse {
         status: true,
         total_bayar: true,
         tanggal_order: true,
-
         konsumen: {
           id: true,
           nama_konsumen: true,
@@ -176,7 +179,6 @@ export class OrderService extends BaseResponse {
 
         order_detail: {
           id: true,
-
           jumlah: true,
           produk: {
             id: true,
