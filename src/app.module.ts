@@ -17,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
 import { OrderModule } from './app/order/order.module';
 import { OrderDetailModule } from './app/order_detail/order_detail.module';
 import { ProfileModule } from './app/profile/profile.module';
+import { QueryBuilderModule } from './query-builder/query-builder.module';
 
 @Module({
   imports: [
@@ -35,6 +36,8 @@ import { ProfileModule } from './app/profile/profile.module';
     OrderModule,
     OrderDetailModule,
     ProfileModule,
+    QueryBuilderModule,
+
   ],
   controllers: [AppController, UploadController],
   providers: [AppService, UniqueValidator],
